@@ -49,12 +49,16 @@
             color: #fff;
         }
 
-        #receipt {
+        .receipt {
             background: #fff;
             margin: 0 auto 24px;
             max-width: 195mm;
             min-height: 245mm;
             padding: 0 1mm;
+        }
+
+        .print-copy {
+            display: none;
         }
 
         .document-header {
@@ -236,7 +240,7 @@
                 text-align: center;
             }
 
-            #receipt {
+            .receipt {
                 margin: 0;
                 min-height: auto;
                 padding: 12px;
@@ -279,11 +283,17 @@
                 display: none;
             }
 
-            #receipt {
+            .receipt {
                 margin: 0;
                 max-width: none;
                 min-height: auto;
                 padding: 0;
+            }
+
+            .print-copy {
+                break-before: page;
+                display: block;
+                page-break-before: always;
             }
         }
     </style>
@@ -292,10 +302,10 @@
 <body>
     <div class="actions">
         <a href="{{ route('dashboard') }}">Volver al buscador</a>
-        <button type="button" onclick="window.print()">Imprimir o guardar como PDF</button>
+        <button type="button" onclick="printReceipts()">Imprimir o guardar como PDF</button>
     </div>
 
-    <main id="receipt">
+    <main class="receipt">
         <header class="document-header">
             <div class="institution">
                 <div class="institution-title">SECRETARÍA DE SEGURIDAD DEL ESTADO DE MÉXICO</div>
@@ -413,11 +423,30 @@
         <div class="identification">IDENTIFICACIÓN REALIZADA POR PERSONAL DEL ÁREA DE UNIFORMES.</div>
     </main>
 
-    @if ($autoPrint)
-        <script>
-            window.addEventListener('load', () => window.print());
-        </script>
-    @endif
+    <script>
+        function printReceipts() {
+            const receipt = document.querySelector('.receipt');
+            const previousCopy = document.querySelector('.print-copy');
+
+            if (!receipt) {
+                return;
+            }
+
+            previousCopy?.remove();
+
+            const printCopy = receipt.cloneNode(true);
+            printCopy.classList.add('print-copy');
+            printCopy.setAttribute('aria-hidden', 'true');
+            receipt.after(printCopy);
+
+            window.addEventListener('afterprint', () => printCopy.remove(), { once: true });
+            window.print();
+        }
+
+        @if ($autoPrint)
+            window.addEventListener('load', printReceipts);
+        @endif
+    </script>
 </body>
 
 </html>
