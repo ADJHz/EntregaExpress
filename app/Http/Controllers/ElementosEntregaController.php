@@ -22,17 +22,14 @@ class ElementosEntregaController extends Controller
 
     public function index(): View
     {
-        return view('pages.EntregaExpress', [
-            'pendingCount' => $this->searchService->pendingCount(),
-            'receivedCount' => $this->searchService->receivedCount(),
-        ]);
+        return view('pages.EntregaExpress');
     }
 
     public function pending(Request $request): JsonResponse
     {
         $search = $this->validatedSearch($request);
         $employees = $this->searchService->pending($search)
-            ->map(fn(ElementosEntrega $employee): array => $this->searchService->payload($employee))
+            ->map(fn (ElementosEntrega $employee): array => $this->searchService->pendingPayload($employee))
             ->values();
 
         return response()->json(['data' => $employees]);
@@ -42,17 +39,24 @@ class ElementosEntregaController extends Controller
     {
         $search = $this->validatedSearch($request);
         $employees = $this->searchService->received($search)
-            ->map(fn(ElementosEntrega $employee): array => $this->searchService->payload($employee))
+            ->map(fn (ElementosEntrega $employee): array => $this->searchService->receivedPayload($employee))
             ->values();
 
         return response()->json(['data' => $employees]);
     }
 
-    public function receive(ElementosEntrega $elemento): View|RedirectResponse
+    public function receive(Request $request, ElementosEntrega $elemento): View|RedirectResponse
     {
         $received = $this->receptionService->receive($elemento);
 
         if (! $received) {
+            if ($request->boolean('resume')) {
+                return view('pages.receipt', [
+                    'elemento' => $elemento->fresh(),
+                    'autoPrint' => true,
+                ]);
+            }
+
             return redirect()
                 ->route('dashboard')
                 ->with('error', 'Este empleado ya fue marcado como recibido.');

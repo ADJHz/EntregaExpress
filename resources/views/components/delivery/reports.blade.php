@@ -2,7 +2,7 @@
     class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-labelledby="reports-heading">
     <div>
         <h2 id="reports-heading" class="text-xl font-bold text-slate-950">Reportes</h2>
-        <p class="mt-1 text-sm text-slate-500">Descarga un archivo CSV compatible con Excel.</p>
+        <p class="mt-1 text-sm text-slate-500">Descarga reporte compatible con Excel.</p>
     </div>
     <form method="GET" action="{{ route('reportes.entregas') }}" class="mt-5 flex flex-col gap-3 sm:flex-row"
         @submit="downloadReport"><select name="estado"

@@ -10,6 +10,11 @@
                 <h1 class="text-xl font-bold text-[#fff8df] sm:text-2xl">Sistema de uniformes</h1>
             </div>
         </div>
+        <div x-show="!isOnline || pendingReceipts.length" x-cloak
+            class="max-w-xs rounded-lg border border-[#d4af37]/60 bg-[#68151d] px-3 py-2 text-right text-xs font-semibold text-[#fff8df]">
+            <span x-show="!isOnline">Sin conexión. El avance se conserva en este equipo.</span>
+            <span x-show="isOnline && pendingReceipts.length">Conexión recuperada. Sincronizando recepción pendiente...</span>
+        </div>
         <img src="{{ asset('Escudos.png') }}" alt="Escudos oficiales" class="hidden h-11 w-36 object-contain sm:block">
     </div>
 </header>

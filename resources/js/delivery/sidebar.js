@@ -30,10 +30,8 @@ export const setupSidebar = () => {
         event.stopPropagation();
         setOpen(toggle.getAttribute("aria-expanded") !== "true");
     });
-    overlay.addEventListener("click", () => setOpen(false));
     window.addEventListener("resize", () =>
         setOpen(localStorage.getItem(storageKey) !== "false"),
     );
-    window.addEventListener("delivery-sidebar-close", () => setOpen(false));
     setOpen(localStorage.getItem(storageKey) !== "false");
 };

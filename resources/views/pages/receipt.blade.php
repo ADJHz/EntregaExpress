@@ -301,7 +301,6 @@
 
 <body>
     <div class="actions">
-        <a href="{{ route('dashboard') }}">Volver al buscador</a>
         <button type="button" onclick="printReceipts()">Imprimir o guardar como PDF</button>
     </div>
 
@@ -439,7 +438,10 @@
             printCopy.setAttribute('aria-hidden', 'true');
             receipt.after(printCopy);
 
-            window.addEventListener('afterprint', () => printCopy.remove(), { once: true });
+            window.addEventListener('afterprint', () => {
+                printCopy.remove();
+                window.location.href = @json(route('dashboard'));
+            }, { once: true });
             window.print();
         }
 

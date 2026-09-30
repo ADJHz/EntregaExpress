@@ -36,7 +36,7 @@ class ElementosEntregaSearchService
     /**
      * @return array<string, mixed>
      */
-    public function payload(ElementosEntrega $employee): array
+    public function pendingPayload(ElementosEntrega $employee): array
     {
         return [
             'id' => $employee->id,
@@ -45,14 +45,19 @@ class ElementosEntregaSearchService
             'ubicacion' => $employee->ubicacion,
             'coordinacion' => $employee->coordinacion,
             'genero' => $employee->genero,
-            'tipo_uniforme' => $employee->tipo_uniforme,
-            'color_franja' => $employee->color_franja,
-            'camisola' => $employee->camisola,
-            'pantalon' => $employee->pantalon,
-            'chamarra' => $employee->chamarra,
-            'bota' => $employee->bota,
-            'cinturon' => $employee->cinturon,
             'receive_url' => route('entregas.recibir', $employee),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function receivedPayload(ElementosEntrega $employee): array
+    {
+        return [
+            'id' => $employee->id,
+            'nombre' => $employee->nombre,
+            'csp' => $employee->csp,
             'reprint_url' => route('entregas.reimprimir', $employee),
         ];
     }
@@ -72,13 +77,13 @@ class ElementosEntregaSearchService
             })
             ->orderBy('nombre')
             ->limit($limit)
-            ->get($this->columns());
+            ->get($received ? $this->receivedColumns() : $this->pendingColumns());
     }
 
     /**
      * @return array<int, string>
      */
-    private function columns(): array
+    private function pendingColumns(): array
     {
         return [
             'id',
@@ -87,13 +92,18 @@ class ElementosEntregaSearchService
             'ubicacion',
             'coordinacion',
             'genero',
-            'tipo_uniforme',
-            'color_franja',
-            'camisola',
-            'pantalon',
-            'chamarra',
-            'bota',
-            'cinturon',
+        ];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function receivedColumns(): array
+    {
+        return [
+            'id',
+            'nombre',
+            'csp',
         ];
     }
 }
